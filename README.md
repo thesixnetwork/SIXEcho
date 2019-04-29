@@ -12,5 +12,6 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 For more information, as well as an immediately useable, kindly visit https://six.network
 
 License
+
 SIX Echo is released under the terms of the MIT license. For more information https://opensource.org/licenses/MIT.
 
