@@ -1,4 +1,4 @@
-# SIXEcho
+# SIX Echo
 Digital assets metadata and fingerprint
 
 Why SIX Echo?
