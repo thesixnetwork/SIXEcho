@@ -1,7 +1,7 @@
 # SIX Echo
 Digital assets metadata and fingerprint
 
-Why SIX Echo?
+# Why SIX Echo?
 
 Our vision is to give digital contents creator the ability to store their works in our SIX digital asset environment, which would be stored on the blockchain and to sell their works directly to consumers of the supply chain. With proof of ownership and proof of existence, such works could easily be tracked from the first hash and time-stamped since the beginning.
 
@@ -11,7 +11,7 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 
 For more information, as well as an immediately useable, kindly visit https://six.network
 
-License
+# License
 
 SIX Echo is released under the terms of the MIT license. For more information https://opensource.org/licenses/MIT.
 
