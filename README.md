@@ -13,5 +13,5 @@ For more information, as well as an immediately useable, kindly visit https://si
 
 # License
 
-SIX Echo is released under the terms of the MIT license. For more information https://opensource.org/licenses/MIT.
+SIX Echo is released under the terms of the Apache license2.0. For more information http://www.apache.org/licenses/LICENSE-2.0
 
