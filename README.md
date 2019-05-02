@@ -9,9 +9,10 @@ With the power of blockchain, content creators, publisher and business aggregato
 
 To shape the better future for the industry, the SIX Echo team envisions the digital asset wallet as the direct connection to facilitate wallet-to-wallet decentralized between the creators and the consumers. There are several decentralized applications and services on the market today that can plug into and attach the smart contract onto their lanes to share incentives, and we realize that we cannot do all of this alone. Therefore, we plan to come up with house rules/standards and use or platform to engage other people(our partners and business alliances) to help us make a better future for the whole digital economy and the digital creative industies.
 
-For more information, as well as an immediately useable, kindly visit https://six.network
+For more information, as well as an immediately useable, kindly visit [SIX Network](https://six.network/). 
 
 # License
 
-SIX Echo is released under the terms of the Apache-2.0. For more information http://www.apache.org/licenses/LICENSE-2.0
+SIX Echo is released under the terms of the Apache-2.0. For more information [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
 
