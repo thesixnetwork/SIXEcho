@@ -25,9 +25,16 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 ## Technology (developing)
 
 
+
+
+
+
+
 ## License
 
 SIX Echo is released under the terms of the Apache-2.0. For more information [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
+
 
 *For more information, as well as an immediately useable, kindly visit [SIX Network](https://six.network/).* 
 
