@@ -7,7 +7,7 @@ REQUIRED_PACKAGES = ['datasketch>=1.4.3,<1.5.0','deepcut>=0.6.1.0' ]
 
 setuptools.setup(
     name="sixecho",
-    version="0.1.1",
+    version="0.1.3",
     author="six.network",
     author_email="dev-lead@six.network",
     description="digital contents",
