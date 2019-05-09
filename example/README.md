@@ -41,6 +41,10 @@ client.array_words
         102746586,  713347982,  227576955,  276376442,  217451670,
          65504487,  157439113,  298109273], dtype=uint64)
 
+### **Load file to generate digest**
+```
+client.generate(fpath="file.txt")
+```
 
 # Test 
 ## Configure
