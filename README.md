@@ -23,6 +23,7 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 - From create and issue rights to the creator, ECHO will create send, receive and trade economy.
 
 ## Technology (developing)
+- python 2.7
 
 
 
