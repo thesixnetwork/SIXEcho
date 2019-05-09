@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-REQUIRED_PACKAGES = ['datasketch>=1.4.3', 'cutkum>=2.4','deepcut>=0.6.1.0','' ]
+REQUIRED_PACKAGES = ['datasketch>=1.4.3','deepcut>=0.6.1.0' ]
 
 setuptools.setup(
     name="sixecho",
