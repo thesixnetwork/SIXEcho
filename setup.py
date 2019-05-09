@@ -3,11 +3,11 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-REQUIRED_PACKAGES = ['datasketch>=1.4.3','deepcut>=0.6.1.0' ]
+REQUIRED_PACKAGES = ['datasketch>=1.4.3,<1.5.0','deepcut>=0.6.1.0' ]
 
 setuptools.setup(
     name="sixecho",
-    version="0.0.1",
+    version="0.1.1",
     author="six.network",
     author_email="dev-lead@six.network",
     description="digital contents",

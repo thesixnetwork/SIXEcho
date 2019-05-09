@@ -1,0 +1,2 @@
+datasketch==1.4.3
+deepcut==0.6.1.0
