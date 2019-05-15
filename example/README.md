@@ -59,7 +59,11 @@ python setup.py nosetests
 python setup.py nosetests --tests sixecho/tests/test_client.py:TestSixecho.test_tokenize
 ```
 
-# Upload pypi 
-```
+# Upload testpypi 
+```bash
 python -m twine upload --repository testpypi dist/*
+```
+# Upload pypi
+```bash
+python -m twine upload dist/*
 ```
