@@ -25,8 +25,15 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 ## Technology (developing)
 - python 2.7
 
-
-
+## Install
+```bash
+pip install sixecho
+```
+## Install manual
+download this project and then cd sixecho, to use this command.
+```bash
+pip install .
+```
 
 
 
