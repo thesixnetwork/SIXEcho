@@ -5,12 +5,16 @@ client = Client()
 client.generate(str="ความสุขของผมคือการทำอะไรเสร็จตามเป้าหมาย  success is  happiness")
 ```
 ### **The sentense after process by word cut.**
-> client.array_words  
->> result: ["ความ", "สุข", "ของ", "ผม", "คือ", "การ", "ทำ", "อะไร", "เสร็จ", "ตาม", "เป้าหมาย", "success", "is", "happiness"] 
+```
+client.array_words  
+```
+> result: ["ความ", "สุข", "ของ", "ผม", "คือ", "การ", "ทำ", "อะไร", "เสร็จ", "ตาม", "เป้าหมาย", "success", "is", "happiness"] 
 
 ### **Get 128 digest from minhash**
-> client.digest()
->> array([ 280072101,  120771717,  113505080,  311917730,   54061830,
+```
+ client.digest()
+```
+> array([ 280072101,  120771717,  113505080,  311917730,   54061830,
         692412087,  649304561,   23680262,  694249824,  197969977,
         730608745,    3294324,  119644586,  104967492,  655069465,
         330578733,  167650525,   30155578,   94570067,  669191241,
@@ -37,6 +41,10 @@ client.generate(str="ความสุขของผมคือการท�
         102746586,  713347982,  227576955,  276376442,  217451670,
          65504487,  157439113,  298109273], dtype=uint64)
 
+### **Load file to generate digest**
+```
+client.generate(fpath="file.txt")
+```
 
 # Test 
 ## Configure
@@ -51,9 +59,14 @@ python setup.py nosetests
 python setup.py nosetests --tests sixecho/tests/test_client.py:TestSixecho.test_tokenize
 ```
 
-# Upload pypi 
-```
+# Upload testpypi 
+```bash
 python -m twine upload --repository testpypi dist/*
+```
+
+# Upload pypi
+```bash
+python -m twine upload dist/*
 ```
 
 ## Build new version
