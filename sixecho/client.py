@@ -7,11 +7,15 @@ from datasketch import MinHash
 import deepcut
 import time
 import os
+import requests
+import json
+import hashlib
+
 
 def tokenize(str):
     """
     Tokenize given Thai, English text string
-    Args: 
+    Args:
        str - Required : Thai, English, Mix(Thai,English) text string
     Returns:
        tokens: list, list of tokenized words
@@ -23,7 +27,8 @@ def tokenize(str):
     new_words = [word for word in words if word != ' ']
     return new_words
 
-def printProgressBar (iteration, total, prefix = 'Progress', suffix = 'Complete', decimals = 1, length = 100, fill = '='):
+
+def printProgressBar(iteration, total, prefix='Progress', suffix='Complete', decimals=1, length=100, fill='='):
     """
     Call in a loop to create terminal progress bar
     Args:
@@ -35,27 +40,32 @@ def printProgressBar (iteration, total, prefix = 'Progress', suffix = 'Complete'
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
     """
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    percent = ("{0:." + str(decimals) + "f}").format(100 *
+                                                     (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = "\r")
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end="\r")
     # Print New Line on Complete
-    if iteration == total: 
+    if iteration == total:
         print()
-        
+
+
 class Client(object):
-    def __init__(self,api_key=None,host_url=None):
+    def __init__(self, api_key=None, host_url=None):
         """
         Initial sixecho
         Attributes:
-            api_key       - Optional : api_key generate from sixecho
-            host_url      - Optional : is sixecho domain 
+            api_key(string)       - Optional : api_key generate from sixecho
+            host_url(string)      - Optional : is sixecho domain
         """
         self.api_key = api_key
-        self.host_url = host_url
+        if host_url != None:
+            if host_url.endswith("/"):
+                host_url = host_url[:-1]
+            self.host_url = host_url
         self.array_words = []
         self.min_hash = MinHash(num_perm=128)
-    
+
     def digest(self):
         """Export the hash values, which is the internal state of the
         MinHash.
@@ -65,33 +75,54 @@ class Client(object):
         """
         return self.min_hash.digest()
 
-    def generate(self,str=None,fpath=None):
+    def generate(self, str=None, fpath=None):
         """Generate minhash with new value from string or file
         we use minhash from https://ekzhu.github.io/datasketch/_modules/datasketch/minhash.html#MinHash.update
         Args:
-            str     - Optional  :   string whose minhash to be computed. 
-            fpath   - Optional  :   path file to be computed.
+            str(string)     - Optional  :   string whose minhash to be computed.
+            fpath(string)   - Optional  :   path file to be computed.
         """
         if fpath:
-            self.load_file(fpath)  
+            self.load_file(fpath)
         else:
+            sha256 = hashlib.sha256()
+            sha256.update(str)
+            self.sha256 = sha256.hexdigest()
             self.array_words = tokenize(str)
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
 
     def upload(self):
-        print("upload")
+        """Upload digital conent to server
 
+        """
+        digest = ",".join([`num` for num in self.digest()])
+        if self.host_url == None or self.api_key == None:
+            raise Exception("Require host_url and api_key")
 
-    def load_file(self,fpath):
-        f = open(fpath,"r")
-        f.readline
+        headers = {
+            "x-api-key": self.api_key,
+            'content-type': 'application/json'
+        }
+        response = requests.post(
+            (self.host_url + "/checker"), json={"digest": digest, "sha256": self.sha256}, headers=headers)
+        print("content:" + str(response.text))
+        return json.loads(response.text)
+
+    def load_file(self, fpath):
+        sha256 = hashlib.sha256()
+        f = open(fpath, "r")
         fileSize = os.path.getsize(fpath)
-        printProgressBar(0, fileSize, prefix = 'Progress:', suffix = 'Complete', length = 50) 
+        printProgressBar(0, fileSize, prefix='Progress:',
+                         suffix='Complete', length=50)
         progress = 0
         for line in f:
             progress = progress + len(line)
+            sha256.updage(line)
             words = tokenize(line)
             for d in words:
                 self.min_hash.update(d.encode('utf8'))
-            printProgressBar(progress, fileSize, prefix = 'Progress:', suffix = 'Complete', length = 50) 
+            printProgressBar(progress, fileSize,
+                             prefix='Progress:', suffix='Complete', length=50)
+        f.close()
+        self.sha256 = sha256.hexdigest()

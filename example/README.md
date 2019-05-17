@@ -55,3 +55,9 @@ python setup.py nosetests --tests sixecho/tests/test_client.py:TestSixecho.test_
 ```
 python -m twine upload --repository testpypi dist/*
 ```
+
+## Build new version
+change version where setup(version="xxxx") from setup.py file. Use this command to build new version.
+```bash
+python setup.py sdist
+```
