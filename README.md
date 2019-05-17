@@ -35,6 +35,8 @@ download this project and then cd sixecho, to use this command.
 pip install .
 ```
 
+# Documentation
+this is a link. click [here](example/README.md)
 
 
 
