@@ -118,7 +118,7 @@ class Client(object):
         progress = 0
         for line in f:
             progress = progress + len(line)
-            sha256.updage(line)
+            sha256.update(line)
             words = tokenize(line)
             for d in words:
                 self.min_hash.update(d.encode('utf8'))
