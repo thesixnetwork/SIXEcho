@@ -46,6 +46,20 @@ client.array_words
 client.generate(fpath="file.txt")
 ```
 
+### **Upload to server**
+```bash
+client = Client(api_key="Your Api key", host_url="Host digital content")
+
+# Generate from text/string or content
+client.generate(str="your content")
+
+# Generate from a file
+client.generate(fpath="your path file")
+
+# Command upload to server follow by host_url
+client.upload()
+```
+
 # Test 
 ## Configure
 To configure the nosetests command, add a [nosetests] section to your setup.cfg file.
