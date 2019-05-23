@@ -4,6 +4,8 @@
 """
 from __future__ import print_function
 from datasketch import MinHash
+from concurrent.futures import ThreadPoolExecutor
+import concurrent
 import deepcut
 import time
 import os
@@ -27,6 +29,14 @@ def tokenize(str):
     new_words = [word for word in words if word != ' ']
     return new_words
 
+def tokenize_mutiline(lines=[]):
+    result = []
+    with ThreadPoolExecutor(max_workers=len(lines)) as executor:
+        future_to_url = {executor.submit(tokenize,line): line for line in lines}
+        for future in concurrent.futures.as_completed(future_to_url):
+            data = future.result()
+            result = result + data
+        return result
 
 def printProgressBar(iteration, total, prefix='Progress', suffix='Complete', decimals=1, length=100, fill='='):
     """
@@ -51,7 +61,7 @@ def printProgressBar(iteration, total, prefix='Progress', suffix='Complete', dec
 
 
 class Client(object):
-    def __init__(self, api_key=None, host_url=None):
+    def __init__(self, api_key=None, host_url=None,max_workers=1):
         """
         Initial sixecho
         Attributes:
@@ -59,12 +69,14 @@ class Client(object):
             host_url(string)      - Optional : is sixecho domain
         """
         self.api_key = api_key
+        deepcut.tokenize("Welcome") # Load library
         if host_url != None:
             if host_url.endswith("/"):
                 host_url = host_url[:-1]
             self.host_url = host_url
         self.array_words = []
         self.min_hash = MinHash(num_perm=128)
+        self.max_workers = max_workers 
 
     def digest(self):
         """Export the hash values, which is the internal state of the
@@ -116,13 +128,24 @@ class Client(object):
         printProgressBar(0, fileSize, prefix='Progress:',
                          suffix='Complete', length=50)
         progress = 0
+        lines = []
         for line in f:
             progress = progress + len(line)
             sha256.update(line)
-            words = tokenize(line)
-            for d in words:
-                self.min_hash.update(d.encode('utf8'))
+            words = []
+            if self.max_workers == 1:
+                words = tokenize(line)
+            else:
+                if len(lines) == self.max_workers:
+                    words = tokenize_mutiline(lines)
+                    lines = []
+                else:
+                    lines.append(line)
+            if len(words) != 0:
+                for d in words:
+                    self.min_hash.update(d.encode('utf8'))
             printProgressBar(progress, fileSize,
                              prefix='Progress:', suffix='Complete', length=50)
         f.close()
         self.sha256 = sha256.hexdigest()
+
