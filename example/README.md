@@ -49,6 +49,8 @@ client.generate(fpath="file.txt")
 ### **Upload to server**
 ```bash
 client = Client(api_key="Your Api key", host_url="Host digital content")
+# Or Mutiple thread
+client = Client(api_key="Your Api key", host_url="Host digital content",max_workers=2)
 
 # Generate from text/string or content
 client.generate(str="your content")
