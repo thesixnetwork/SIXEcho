@@ -1,17 +1,24 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
+use encoding utf-8
 """
 from __future__ import print_function
-from datasketch import MinHash
-from concurrent.futures import ThreadPoolExecutor
+
 import concurrent
-import deepcut
-import time
-import os
-import requests
-import json
 import hashlib
+import json
+import os
+from concurrent.futures import ThreadPoolExecutor
+
+import deepcut
+import requests
+from datasketch import MinHash
+
+
+def mygrouper(n, iterable):
+    args = [iter(iterable)] * n
+    return ([e for e in t if e != None] for t in itertools.zip_longest(*args))
 
 
 def tokenize(str):
@@ -29,16 +36,29 @@ def tokenize(str):
     new_words = [word for word in words if word != ' ']
     return new_words
 
+
 def tokenize_mutiline(lines=[]):
     result = []
+    if len(lines) == 0:
+        return result
     with ThreadPoolExecutor(max_workers=len(lines)) as executor:
-        future_to_url = {executor.submit(tokenize,line): line for line in lines}
+        future_to_url = {
+            executor.submit(tokenize, line): line
+            for line in lines
+        }
         for future in concurrent.futures.as_completed(future_to_url):
             data = future.result()
             result = result + data
         return result
 
-def printProgressBar(iteration, total, prefix='Progress', suffix='Complete', decimals=1, length=100, fill='='):
+
+def printProgressBar(iteration,
+                     total,
+                     prefix='Progress',
+                     suffix='Complete',
+                     decimals=1,
+                     length=100,
+                     fill='='):
     """
     Call in a loop to create terminal progress bar
     Args:
@@ -50,18 +70,22 @@ def printProgressBar(iteration, total, prefix='Progress', suffix='Complete', dec
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
     """
-    percent = ("{0:." + str(decimals) + "f}").format(100 *
-                                                     (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end="\r")
+    percent = ("{0:." + str(decimals) + "f}").format(
+        100 * (iteration / float(total)))
+    filled_length = int(length * iteration // total)
+    tab_bar = fill * filled_length + '-' * (length - filled_length)
+    print('\r%s |%s| %s%% %s' % (prefix, tab_bar, percent, suffix), end="\r")
     # Print New Line on Complete
     if iteration == total:
         print()
 
 
 class Client(object):
-    def __init__(self, api_key=None, host_url=None,max_workers=1):
+    """
+    client class to control api with restful
+    """
+
+    def __init__(self, api_key=None, host_url=None, max_workers=1):
         """
         Initial sixecho
         Attributes:
@@ -69,14 +93,15 @@ class Client(object):
             host_url(string)      - Optional : is sixecho domain
         """
         self.api_key = api_key
-        deepcut.tokenize("Welcome") # Load library
-        if host_url != None:
+        deepcut.tokenize("Welcome")  # Load library
+        if host_url is not None:
             if host_url.endswith("/"):
                 host_url = host_url[:-1]
             self.host_url = host_url
         self.array_words = []
         self.min_hash = MinHash(num_perm=128)
-        self.max_workers = max_workers 
+        self.max_workers = max_workers
+        self.sha256 = ""
 
     def digest(self):
         """Export the hash values, which is the internal state of the
@@ -108,44 +133,99 @@ class Client(object):
         """Upload digital conent to server
 
         """
-        digest = ",".join([`num` for num in self.digest()])
-        if self.host_url == None or self.api_key == None:
+        digest = ",".join([str(num) for num in self.digest()])
+        if self.host_url is None or self.api_key is None:
             raise Exception("Require host_url and api_key")
 
         headers = {
             "x-api-key": self.api_key,
             'content-type': 'application/json'
         }
-        response = requests.post(
-            (self.host_url + "/checker"), json={"digest": digest, "sha256": self.sha256}, headers=headers)
+        response = requests.post((self.host_url + "/checker"),
+                                 json={
+                                     "digest": digest,
+                                     "sha256": self.sha256
+                                 },
+                                 headers=headers)
         print("content:" + str(response.text))
         return json.loads(response.text)
 
     def load_file(self, fpath):
+        """
+        method load_file
+        """
         sha256 = hashlib.sha256()
-        f = open(fpath, "r")
+        f_count = open(fpath, "r")
+        f = f_count.readlines()
+        f_count.close()
+        list_of_groups = None
+        if self.max_workers != 1:
+            l = f
+            n = self.max_workers
+            list_of_groups = [l[i:i + n] for i in range(0, len(l), n)]
+            #  list_of_groups = zip(*(iter(f), ) * self.max_workers)
+
         fileSize = os.path.getsize(fpath)
-        printProgressBar(0, fileSize, prefix='Progress:',
-                         suffix='Complete', length=50)
+        printProgressBar(0,
+                         fileSize,
+                         prefix='Progress:',
+                         suffix='Complete',
+                         length=50)
         progress = 0
         lines = []
-        for line in f:
-            progress = progress + len(line)
-            sha256.update(line)
-            words = []
-            if self.max_workers == 1:
+        if self.max_workers == 1:
+            for line in f:
+                progress = progress + len(line)
+                sha256.update(line)
                 words = tokenize(line)
-            else:
-                if len(lines) == self.max_workers:
-                    words = tokenize_mutiline(lines)
-                    lines = []
-                else:
-                    lines.append(line)
-            if len(words) != 0:
-                for d in words:
-                    self.min_hash.update(d.encode('utf8'))
-            printProgressBar(progress, fileSize,
-                             prefix='Progress:', suffix='Complete', length=50)
-        f.close()
+                if len(words) != 0:
+                    for d in words:
+                        self.min_hash.update(d.encode('utf8'))
+                printProgressBar(progress,
+                                 fileSize,
+                                 prefix='Progress:',
+                                 suffix='Complete',
+                                 length=50)
+        else:
+            for line in f:
+                sha256.update(line)
+            for lines in list_of_groups:
+                for line in lines:
+                    progress = progress + len(line)
+                    #  sha256.update(line)
+                words = tokenize_mutiline(lines)
+                if len(words) != 0:
+                    for d in words:
+                        self.min_hash.update(d.encode('utf8'))
+                printProgressBar(progress,
+                                 fileSize,
+                                 prefix='Progress:',
+                                 suffix='Complete',
+                                 length=50)
         self.sha256 = sha256.hexdigest()
-
+        #  for line in f:
+        #  progress = progress + len(line)
+        #  sha256.update(line)
+        #  words = []
+        #  loop_i = loop_i + 1
+        #  if self.max_workers == 1:
+        #  words = tokenize(line)
+        #  else:
+        #  if len(lines) == self.max_workers or (loop_i == line_count):
+        #  if loop_i == line_count:
+        #  lines.append(line)
+        #  print(line)
+        #  print(str(loop_i) + " " + str(len(lines)))
+        #  words = tokenize_mutiline(lines)
+        #  lines = []
+        #  else:
+        #  lines.append(line)
+        #  if len(words) != 0:
+        #  for d in words:
+        #  self.min_hash.update(d.encode('utf8'))
+        #  printProgressBar(progress,
+        #  fileSize,
+        #  prefix='Progress:',
+        #  suffix='Complete',
+        #  length=50)
+        #  self.sha256 = sha256.hexdigest()
