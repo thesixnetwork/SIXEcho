@@ -5,12 +5,12 @@ with open("README.md", "r") as fh:
 
 REQUIRED_PACKAGES = [
     'datasketch>=1.4.3,<1.5.0', 'deepcut>=0.6.1.0', 'futures==3.2.0',
-    'tensorflow==1.13.1'
+    'tensorflow==1.13.1', 'requests==2.20.1'
 ]
 
 setuptools.setup(
     name="sixecho",
-    version="0.1.8",
+    version="0.1.9",
     author="six.network",
     author_email="dev-lead@six.network",
     description="digital contents",
