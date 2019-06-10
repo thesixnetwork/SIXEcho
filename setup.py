@@ -19,7 +19,9 @@ setuptools.setup(
     url="https://github.com/thesixnetwork/SIXEcho",
     packages=setuptools.find_packages(),
     install_requires=REQUIRED_PACKAGES,
-    license='MIT',
     test_suite='nose.collector',
     tests_require=['nose'],
+    classifiers=[
+        'License :: OSI Approved :: MIT License'
+    ],
 )
