@@ -102,6 +102,7 @@ class Client(object):
         self.min_hash = MinHash(num_perm=128)
         self.max_workers = max_workers
         self.sha256 = ""
+        self.fileSize=0
 
     def digest(self):
         """Export the hash values, which is the internal state of the
@@ -126,6 +127,7 @@ class Client(object):
             sha256.update(str)
             self.sha256 = sha256.hexdigest()
             self.array_words = tokenize(str)
+            self.fileSize=len(str)
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
 
@@ -144,7 +146,8 @@ class Client(object):
         response = requests.post((self.host_url + "/checker"),
                                  json={
                                      "digest": digest,
-                                     "sha256": self.sha256
+                                     "sha256": self.sha256,
+                                     "size_file": self.fileSize
                                  },
                                  headers=headers)
         print("content:" + str(response.text))
@@ -203,6 +206,7 @@ class Client(object):
                                  suffix='Complete',
                                  length=50)
         self.sha256 = sha256.hexdigest()
+        self.fileSize=fileSize
         #  for line in f:
         #  progress = progress + len(line)
         #  sha256.update(line)
