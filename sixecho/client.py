@@ -10,11 +10,11 @@ import hashlib
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor
-from pythainlp import word_tokenize
 
-#import deepcut
 import requests
 from datasketch import MinHash
+from pythainlp import word_tokenize
+
 
 def mygrouper(n, iterable):
     args = [iter(iterable)] * n
@@ -32,7 +32,7 @@ def tokenize(str):
     >> sixecho.tokenize('I am a developer python newly. ผมเป็นมือใหม่สำหรับ python')
     >> ['I','am','a','developer','python','newly','.','ผม','เป็น','มือ','ใหม่','สำหรับ','python']
     """
-    words = word_tokenize(str, engine = "dict")
+    words = word_tokenize(str, engine="dict")
     new_words = [word for word in words if word != ' ']
     return new_words
 
@@ -93,8 +93,8 @@ class Client(object):
             host_url(string)      - Optional : is sixecho domain
         """
         self.api_key = api_key
-        #deepcut.tokenize("Welcome")  # Load library
-        #if host_url is not None:
+        # deepcut.tokenize("Welcome")  # Load library
+        # if host_url is not None:
         #    if host_url.endswith("/"):
         #        host_url = host_url[:-1]
         #    self.host_url = host_url
@@ -102,7 +102,7 @@ class Client(object):
         self.min_hash = MinHash(num_perm=128)
         self.max_workers = max_workers
         self.sha256 = ""
-        self.fileSize=0
+        self.fileSize = 0
 
     def digest(self):
         """Export the hash values, which is the internal state of the
@@ -127,7 +127,7 @@ class Client(object):
             sha256.update(str)
             self.sha256 = sha256.hexdigest()
             self.array_words = tokenize(str)
-            self.fileSize=len(str)
+            self.fileSize = len(str)
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
 
@@ -206,7 +206,7 @@ class Client(object):
                                  suffix='Complete',
                                  length=50)
         self.sha256 = sha256.hexdigest()
-        self.fileSize=fileSize
+        self.fileSize = fileSize
         #  for line in f:
         #  progress = progress + len(line)
         #  sha256.update(line)
