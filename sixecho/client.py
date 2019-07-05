@@ -10,11 +10,11 @@ import hashlib
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor
+from pythainlp import word_tokenize
 
-import deepcut
+#import deepcut
 import requests
 from datasketch import MinHash
-
 
 def mygrouper(n, iterable):
     args = [iter(iterable)] * n
@@ -32,7 +32,7 @@ def tokenize(str):
     >> sixecho.tokenize('I am a developer python newly. ผมเป็นมือใหม่สำหรับ python')
     >> ['I','am','a','developer','python','newly','.','ผม','เป็น','มือ','ใหม่','สำหรับ','python']
     """
-    words = deepcut.tokenize(str)
+    words = word_tokenize(str, engine = "dict")
     new_words = [word for word in words if word != ' ']
     return new_words
 
@@ -93,11 +93,11 @@ class Client(object):
             host_url(string)      - Optional : is sixecho domain
         """
         self.api_key = api_key
-        deepcut.tokenize("Welcome")  # Load library
-        if host_url is not None:
-            if host_url.endswith("/"):
-                host_url = host_url[:-1]
-            self.host_url = host_url
+        #deepcut.tokenize("Welcome")  # Load library
+        #if host_url is not None:
+        #    if host_url.endswith("/"):
+        #        host_url = host_url[:-1]
+        #    self.host_url = host_url
         self.array_words = []
         self.min_hash = MinHash(num_perm=128)
         self.max_workers = max_workers
