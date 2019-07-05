@@ -10,11 +10,11 @@ import hashlib
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor
-from pythainlp import word_tokenize
 
-#import deepcut
 import requests
 from datasketch import MinHash
+from pythainlp import word_tokenize
+
 
 def mygrouper(n, iterable):
     args = [iter(iterable)] * n
@@ -32,7 +32,7 @@ def tokenize(str):
     >> sixecho.tokenize('I am a developer python newly. ผมเป็นมือใหม่สำหรับ python')
     >> ['I','am','a','developer','python','newly','.','ผม','เป็น','มือ','ใหม่','สำหรับ','python']
     """
-    words = word_tokenize(str, engine = "dict")
+    words = word_tokenize(str, engine="dict")
     new_words = [word for word in words if word != ' ']
     return new_words
 
@@ -85,24 +85,37 @@ class Client(object):
     client class to control api with restful
     """
 
-    def __init__(self, api_key=None, host_url=None, max_workers=1):
+    def __init__(self,
+                 api_key=None,
+                 host_url=None,
+                 max_workers=1,
+                 meta_books=None):
         """
         Initial sixecho
         Attributes:
             api_key(string)       - Optional : api_key generate from sixecho
             host_url(string)      - Optional : is sixecho domain
+            meta_books(Hash)      - Require  : struct books include
+                - category_id(string) - Require : category of books you can get from search category api
+                - publisher_id(string) - Require : publisher of book you can get from search publisher api
+                - title(string) - Require : title book
+                - auther(string) - Require : auther book
+                - country_of_origin(string) : country iso 3166-1
+                - language(string) Require : language iso 639-1
+                - paperback(string) Require : total page book
+                - publish_date(string) Require : publish date
         """
         self.api_key = api_key
-        #deepcut.tokenize("Welcome")  # Load library
-        #if host_url is not None:
-        #    if host_url.endswith("/"):
-        #        host_url = host_url[:-1]
-        #    self.host_url = host_url
+        if host_url is not None:
+            if host_url.endswith("/"):
+                host_url = host_url[:-1]
+            self.host_url = host_url
         self.array_words = []
         self.min_hash = MinHash(num_perm=128)
         self.max_workers = max_workers
         self.sha256 = ""
-        self.fileSize=0
+        self.fileSize = 0
+        self.meta_books = meta_books
 
     def digest(self):
         """Export the hash values, which is the internal state of the
@@ -124,10 +137,10 @@ class Client(object):
             self.load_file(fpath)
         else:
             sha256 = hashlib.sha256()
-            sha256.update(str)
+            sha256.update(str.encode())
             self.sha256 = sha256.hexdigest()
             self.array_words = tokenize(str)
-            self.fileSize=len(str)
+            self.fileSize = len(str)
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
 
@@ -143,13 +156,15 @@ class Client(object):
             "x-api-key": self.api_key,
             'content-type': 'application/json'
         }
-        response = requests.post((self.host_url + "/checker"),
-                                 json={
-                                     "digest": digest,
-                                     "sha256": self.sha256,
-                                     "size_file": self.fileSize
-                                 },
-                                 headers=headers)
+        response = requests.post(
+            (self.host_url + "/checker"),
+            json={
+                "digest": digest,
+                "sha256": self.sha256,
+                "size_file": self.fileSize,
+                "meta_books": self.meta_books
+            },
+            headers=headers)
         print("content:" + str(response.text))
         return json.loads(response.text)
 
@@ -179,7 +194,7 @@ class Client(object):
         if self.max_workers == 1:
             for line in f:
                 progress = progress + len(line)
-                sha256.update(line)
+                sha256.update(line.encode())
                 words = tokenize(line)
                 if len(words) != 0:
                     for d in words:
@@ -191,11 +206,10 @@ class Client(object):
                                  length=50)
         else:
             for line in f:
-                sha256.update(line)
+                sha256.update(line.encode())
             for lines in list_of_groups:
                 for line in lines:
                     progress = progress + len(line)
-                    #  sha256.update(line)
                 words = tokenize_mutiline(lines)
                 if len(words) != 0:
                     for d in words:
@@ -206,30 +220,4 @@ class Client(object):
                                  suffix='Complete',
                                  length=50)
         self.sha256 = sha256.hexdigest()
-        self.fileSize=fileSize
-        #  for line in f:
-        #  progress = progress + len(line)
-        #  sha256.update(line)
-        #  words = []
-        #  loop_i = loop_i + 1
-        #  if self.max_workers == 1:
-        #  words = tokenize(line)
-        #  else:
-        #  if len(lines) == self.max_workers or (loop_i == line_count):
-        #  if loop_i == line_count:
-        #  lines.append(line)
-        #  print(line)
-        #  print(str(loop_i) + " " + str(len(lines)))
-        #  words = tokenize_mutiline(lines)
-        #  lines = []
-        #  else:
-        #  lines.append(line)
-        #  if len(words) != 0:
-        #  for d in words:
-        #  self.min_hash.update(d.encode('utf8'))
-        #  printProgressBar(progress,
-        #  fileSize,
-        #  prefix='Progress:',
-        #  suffix='Complete',
-        #  length=50)
-        #  self.sha256 = sha256.hexdigest()
+        self.fileSize = fileSize
