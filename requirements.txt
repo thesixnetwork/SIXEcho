@@ -4,4 +4,4 @@ pandas
 scikit-learn
 keras>=2.0.0
 requests
-pythainlp===2.0.6
+pythainlp==2.0.6
