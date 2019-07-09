@@ -16,6 +16,7 @@ from datasketch import MinHash
 from pythainlp import word_tokenize
 from epub_conversion.utils import open_book
 import epub_conversion as ec
+import PyPDF2
 
 
 def mygrouper(n, iterable):
@@ -128,13 +129,14 @@ class Client(object):
         """
         return self.min_hash.digest()
 
-    def generate(self, str=None, txtpath=None, epubpath=None):
+    def generate(self, str=None, txtpath=None, epubpath=None, pdfpath=None):
         """Generate minhash with new value from string or file
         we use minhash from https://ekzhu.github.io/datasketch/_modules/datasketch/minhash.html#MinHash.update
         Args:
             str(string)     - Optional  :   string whose minhash to be computed.
             txtpath(string)   - Optional  :   path of text file to be computed.
-            epubpath(string)   - Optional  :   path of epub file to be computed.
+            epubpath(string)   - Optional  :   path of epub file to be computed. epub has to be in books folder
+            pdfpath(string)   - Optional  :   path of pdf file to be computed. pdf has to be in books folder
         """
         if txtpath:
             self.load_file(txtpath)
@@ -147,6 +149,16 @@ class Client(object):
             name = name+'.txt'
             self.write2text(self.readepub(epubpath), name)
             self.load_file('./books/'+name)
+        elif pdfpath:
+            size = len(pdfpath.split('.'))
+            name = pdfpath.split('.')[size - 2]
+            size = len(name.split('/'))
+            name = name.split('/')[size - 1]
+            name = name.replace("/", "")
+            name = name + '.txt'
+            self.write2text(self.readpdf(pdfpath), name)
+            self.load_file('./books/'+name)
+
         else:
             sha256 = hashlib.sha256()
             sha256.update(str.encode())
@@ -246,29 +258,23 @@ class Client(object):
                 list_text.append(ele)
         return list_text
 
+    def readpdf(self, fpath):
+        pdfFileObj = open(fpath, 'rb')  # 'rb' for read binary mode
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        total_page = pdfReader.numPages
+        print(total_page)
+        list_text = []
+        for i in range(total_page):
+            pageObj = pdfReader.getPage(i)
+            list_text.append(pageObj.extractText())
+        return list_text
+    
     def write2text(self, list_text, opname):
         fpath = './books/'+opname
         file = open(fpath, 'w')
         for ele in list_text:
             file.write(ele)
+        file.close()
 
-meta_books = {
-    "category_id": "1",
-    "publisher_id": "1",
-    "title": "nonnon",
-    "author": "theeratnon",
-    "country_of_origin": "THA",
-    "language": "th",
-    "paperback": "134",
-    "publish_date": 1560869555
-}
-client = Client(
-    host_url=
-    "https://mc64byvj0i.execute-api.ap-southeast-1.amazonaws.com/prod/",
-    api_key="4S8Vps2d7t3FiYgt07lQL1i620JRR8Ena0DWhVmv",
-    max_workers=2,
-    meta_books=meta_books)
 
-client.generate(epubpath="./books/book.epub")
-client.digest()
-client.upload()
+
