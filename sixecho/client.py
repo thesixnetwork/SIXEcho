@@ -17,6 +17,10 @@ from pythainlp import word_tokenize
 from epub_conversion.utils import open_book
 import epub_conversion as ec
 import PyPDF2
+import hmac
+import hashlib
+import binascii
+
 
 
 def mygrouper(n, iterable):
@@ -168,16 +172,32 @@ class Client(object):
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
 
-    def upload(self):
-        """Upload digital conent to server
+    def create_sha256_signature(self, secret, message):
+        byte_secret = binascii.unhexlify(secret)
+        message = message.encode()
+        return hmac.new(byte_secret, message, hashlib.sha256).hexdigest().upper()
 
+    def sorted_dictionary(self,unsorted_dict):
+        sortednames = sorted(unsorted_dict.keys(), key=lambda x: x.lower())
+        sorted_dict = {}
+        for i in sortednames:
+            sorted_dict[i] = unsorted_dict[i]
+        return sorted_dict
+
+    def upload(self, api_secret):
         """
+        Upload digital conent to server
+        """
+        sorted_dict = self.sorted_dictionary(meta_books[0])
+        signature = self.create_sha256_signature(api_secret, str(sorted_dict))
+
         digest = ",".join([str(num) for num in self.digest()])
         if self.host_url is None or self.api_key is None:
             raise Exception("Require host_url and api_key")
 
         headers = {
             "x-api-key": self.api_key,
+            "x-api-sign": signature,
             'content-type': 'application/json'
         }
         response = requests.post(
@@ -275,6 +295,25 @@ class Client(object):
         for ele in list_text:
             file.write(ele)
         file.close()
+
+meta_books = [{
+    "category_id": "1",
+    "publisher_id": "1",
+    "title": "golf",
+    "author": "watcharapon",
+    "country_of_origin": "THA",
+    "language": "th",
+    "paperback": "134",
+    "publish_date": 1560869555
+}]
+client = Client(
+    host_url=
+    "https://mc64byvj0i.execute-api.ap-southeast-1.amazonaws.com/prod/",
+    api_key="4S8Vps2d7t3FiYgt07lQL1i620JRR8Ena0DWhVmv",
+    max_workers=2,
+    meta_books=meta_books)
+x = client.create_sha256_signature("E49756B4C8FAB4E48222A3E7F3B97CC3", str(meta_books[0]))
+print(x)
 
 
 
