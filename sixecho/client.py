@@ -96,7 +96,8 @@ class Client(object):
                  api_key=None,
                  host_url=None,
                  max_workers=1,
-                 meta_books=None):
+                 meta_books=None,
+                 api_secret=None):
         """
         Initial sixecho
         Attributes:
@@ -113,6 +114,7 @@ class Client(object):
                 - publish_date(string) Require : publish date
         """
         self.api_key = api_key
+        self.api_secret = api_secret
         if host_url is not None:
             if host_url.endswith("/"):
                 host_url = host_url[:-1]
