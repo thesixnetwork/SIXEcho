@@ -184,7 +184,7 @@ class Client(object):
             sorted_dict[i] = unsorted_dict[i]
         return sorted_dict
 
-    def upload(self, api_secret):
+    def upload(self, api_secret=None):
         """
         Upload digital conent to server
         """
