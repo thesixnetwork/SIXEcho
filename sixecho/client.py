@@ -18,9 +18,7 @@ from epub_conversion.utils import open_book
 import epub_conversion as ec
 import PyPDF2
 import hmac
-import hashlib
 import binascii
-
 
 
 def mygrouper(n, iterable):
@@ -96,8 +94,8 @@ class Client(object):
                  api_key=None,
                  host_url=None,
                  max_workers=1,
-                 meta_books=None,
-                 api_secret=None):
+                 meta_books=None
+                 ):
         """
         Initial sixecho
         Attributes:
@@ -114,7 +112,6 @@ class Client(object):
                 - publish_date(string) Require : publish date
         """
         self.api_key = api_key
-        self.api_secret = api_secret
         if host_url is not None:
             if host_url.endswith("/"):
                 host_url = host_url[:-1]
@@ -175,24 +172,37 @@ class Client(object):
                 self.min_hash.update(d.encode('utf8'))
 
     def create_sha256_signature(self, secret, message):
-        byte_secret = binascii.unhexlify(secret)
-        message = message.encode()
-        return hmac.new(byte_secret, message, hashlib.sha256).hexdigest().upper()
+        secret = str(secret)
+        message = str(message)
+        print(secret, message)
+        print(type(secret))
+        print(type(message))
+        secret_byte = str(secret).encode('utf-8')
+        message_byte = str(message).encode('utf-8')
+        signature = hmac.new(secret_byte, message_byte, hashlib.sha256).hexdigest()
+        return signature
 
-    def sorted_dictionary(self,unsorted_dict):
-        sortednames = sorted(unsorted_dict.keys(), key=lambda x: x.lower())
-        sorted_dict = {}
-        for i in sortednames:
-            sorted_dict[i] = unsorted_dict[i]
-        return sorted_dict
+    def sorted_toString(self,unsorted_dict):
+        s = ''
+        for key, value in sorted(unsorted_dict.items()):
+            s = s + str(key) + str(value)
+        return s
+        # sortednames = sorted(unsorted_dict.keys(), key=lambda x: x.lower())
+        # print(sortednames)
+        # sorted_dict = {}
+        # for i in sortednames:
+        #     sorted_dict[i] = unsorted_dict[i]
+        # return str(sorted_dict)
 
     def upload(self, api_secret=None):
         """
         Upload digital conent to server
         """
-        sorted_dict = self.sorted_dictionary(meta_books[0])
-        signature = self.create_sha256_signature(api_secret, str(sorted_dict))
-
+        sorted_meta_books = self.sorted_toString(meta_books[0])
+        signature = self.create_sha256_signature(str(api_secret), str(sorted_meta_books))
+        print(signature)
+        print(sorted_meta_books)
+        print(type(sorted_meta_books))
         digest = ",".join([str(num) for num in self.digest()])
         if self.host_url is None or self.api_key is None:
             raise Exception("Require host_url and api_key")
@@ -298,24 +308,6 @@ class Client(object):
             file.write(ele)
         file.close()
 
-meta_books = [{
-    "category_id": "1",
-    "publisher_id": "1",
-    "title": "golf",
-    "author": "watcharapon",
-    "country_of_origin": "THA",
-    "language": "th",
-    "paperback": "134",
-    "publish_date": 1560869555
-}]
-client = Client(
-    host_url=
-    "https://mc64byvj0i.execute-api.ap-southeast-1.amazonaws.com/prod/",
-    api_key="4S8Vps2d7t3FiYgt07lQL1i620JRR8Ena0DWhVmv",
-    max_workers=2,
-    meta_books=meta_books)
-x = client.create_sha256_signature("E49756B4C8FAB4E48222A3E7F3B97CC3", str(meta_books[0]))
-print(x)
 
 
 
