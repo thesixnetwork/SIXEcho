@@ -198,7 +198,7 @@ class Client(object):
         """
         Upload digital conent to server
         """
-        sorted_meta_books = self.sorted_toString(meta_books[0])
+        sorted_meta_books = self.sorted_toString(self.meta_books)
         signature = self.create_sha256_signature(str(api_secret), str(sorted_meta_books))
         print(signature)
         print(sorted_meta_books)
