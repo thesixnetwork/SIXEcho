@@ -138,8 +138,8 @@ class Client(object):
         Args:
             str(string)     - Optional  :   string whose minhash to be computed.
             txtpath(string)   - Optional  :   path of text file to be computed.
-            epubpath(string)   - Optional  :   path of epub file to be computed. epub has to be in books folder
-            pdfpath(string)   - Optional  :   path of pdf file to be computed. pdf has to be in books folder
+            epubpath(string)   - Optional  :   path of epub file to be computed.
+            pdfpath(string)   - Optional  :   path of pdf file to be computed.
         """
         if txtpath:
             self.load_file(txtpath)
@@ -150,8 +150,10 @@ class Client(object):
             name = name.split('/')[size-1]
             name = name.replace("/","")
             name = name+'.txt'
+            cur_path = os.path.dirname(os.path.abspath(__file__))
             self.write2text(self.readepub(epubpath), name)
-            self.load_file('./books/'+name)
+            self.load_file(cur_path+'/'+name)
+            os.remove(cur_path+'/'+name)
         elif pdfpath:
             size = len(pdfpath.split('.'))
             name = pdfpath.split('.')[size - 2]
@@ -159,8 +161,10 @@ class Client(object):
             name = name.split('/')[size - 1]
             name = name.replace("/", "")
             name = name + '.txt'
+            cur_path = os.path.dirname(os.path.abspath(__file__))
             self.write2text(self.readpdf(pdfpath), name)
-            self.load_file('./books/'+name)
+            self.load_file(cur_path+'/'+name)
+            os.remove(cur_path+'/'+name)
 
         else:
             sha256 = hashlib.sha256()
@@ -174,9 +178,9 @@ class Client(object):
     def create_sha256_signature(self, secret, message):
         secret = str(secret)
         message = str(message)
-        print(secret, message)
-        print(type(secret))
-        print(type(message))
+        # print(secret, message)
+        # print(type(secret))
+        # print(type(message))
         secret_byte = str(secret).encode('utf-8')
         message_byte = str(message).encode('utf-8')
         signature = hmac.new(secret_byte, message_byte, hashlib.sha256).hexdigest()
@@ -284,7 +288,7 @@ class Client(object):
         lines = ec.utils.convert_epub_to_lines(book)
         for line in lines:
 
-            text = ec.utils.convert_lines_to_text(str(line), "test")
+            text = ec.utils.convert_lines_to_text(str(line), "txt")
             text = list(text)
             for ele in text:
                 list_text.append(ele)
@@ -294,7 +298,7 @@ class Client(object):
         pdfFileObj = open(fpath, 'rb')  # 'rb' for read binary mode
         pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
         total_page = pdfReader.numPages
-        print(total_page)
+        # print(total_page)
         list_text = []
         for i in range(total_page):
             pageObj = pdfReader.getPage(i)
@@ -302,8 +306,11 @@ class Client(object):
         return list_text
     
     def write2text(self, list_text, opname):
-        fpath = './books/'+opname
-        file = open(fpath, 'w')
+        cur_path = os.path.dirname(os.path.abspath(__file__))
+        fpath = opname
+        print(cur_path)
+        print(cur_path+'/'+fpath)
+        file = open(cur_path+'/'+fpath, 'w')
         for ele in list_text:
             file.write(ele)
         file.close()
