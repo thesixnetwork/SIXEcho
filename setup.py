@@ -4,7 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 REQUIRED_PACKAGES = [
-    'datasketch>=1.4.3,<1.5.0', 'requests==2.20.1', 'pythainlp==2.0.6', 'epub-conversion==1.0.7','PyPDF2==1.26.0'
+    'datasketch>=1.4.3,<1.5.0', 'requests==2.20.1', 'pythainlp==2.0.6',
+    'epub-conversion==1.0.7', 'PyPDF2==1.26.0', 'ImageHash==4.0'
 ]
 
 setuptools.setup(
