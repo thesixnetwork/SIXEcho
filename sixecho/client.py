@@ -74,14 +74,6 @@ class Client(object):
         if len(digital_content.meta_media) == 0:
             raise Exception("Meta Media does not set")
 
-        print(headers)
-        print({
-            "digest": digital_content.digest,
-            "sha256": digital_content.sha256,
-            "size_file": digital_content.file_size,
-            "meta_media": digital_content.meta_media,
-            "type": digital_content.type
-        })
         response = requests.post(
             (self.host_url + "/checker"),
             json={

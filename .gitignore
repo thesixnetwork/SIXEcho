@@ -68,6 +68,6 @@ doctrees
 
 # Jetbrains
 .idea
-
+.DS_Store
 # vcode
 .vscode

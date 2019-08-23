@@ -71,6 +71,7 @@ class Image(object):
         self.file_size = os.path.getsize(imgpath)
         self.digest = str(average_hash) + "," + str(phash) + \
             "," + str(dhash) + "," + str(whash)
+        print(ob_img._getexif())
         info = ob_img._getexif()
         ret = {}
         for tag, value in info.items():
