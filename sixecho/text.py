@@ -150,7 +150,7 @@ class Text(object):
             self.file_size = len(str)
             for d in self.array_words:
                 self.min_hash.update(d.encode('utf8'))
-        self.digest = ",".join([str(num) for num in self.min_hash.digest()])
+        self.make_digest()
 
     def set_meta(self, meta_books):
         """
@@ -178,6 +178,9 @@ class Text(object):
         signature = hmac.new(secret_byte, message_byte,
                              hashlib.sha256).hexdigest()
         return signature
+
+    def make_digest(self):
+        self.digest = ",".join([str(num) for num in self.min_hash.digest()])
 
     def load_file(self, fpath):
         """

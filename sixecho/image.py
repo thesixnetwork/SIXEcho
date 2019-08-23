@@ -53,7 +53,7 @@ class Image(object):
         meta_media.update(self.exif)
         self.meta_media = meta_media
 
-    def generate_img(self, imgpath=None):
+    def generate(self, imgpath=None):
         """
         Args:
         imgpath - Required

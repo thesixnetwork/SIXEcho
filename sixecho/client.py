@@ -71,21 +71,24 @@ class Client(object):
             "x-api-sign": signature,
             'content-type': 'application/json'
         }
-        print(headers)
         if len(digital_content.meta_media) == 0:
             raise Exception("Meta Media does not set")
 
-        print(digital_content.meta_media["MakerNote"])
+        print(headers)
+        print({
+            "digest": digital_content.digest,
+            "sha256": digital_content.sha256,
+            "size_file": digital_content.file_size,
+            "meta_media": digital_content.meta_media,
+            "type": digital_content.type
+        })
         response = requests.post(
             (self.host_url + "/checker"),
             json={
                 "digest": digital_content.digest,
                 "sha256": digital_content.sha256,
                 "size_file": digital_content.file_size,
-                #  "meta_media": digital_content.meta_media,
-                "meta_media": {
-                    "a": digital_content.meta_media
-                },
+                "meta_media": digital_content.meta_media,
                 "type": digital_content.type
             },
             headers=headers)
