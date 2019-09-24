@@ -10,7 +10,7 @@ REQUIRED_PACKAGES = [
 
 setuptools.setup(
     name="sixecho",
-    version="1.0.3",
+    version="1.1.1",
     author="six.network",
     author_email="dev-lead@six.network",
     description="digital contents",
