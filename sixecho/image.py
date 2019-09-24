@@ -73,7 +73,10 @@ class Image(object):
             "," + str(dhash) + "," + str(whash)
         info = ob_img._getexif()
         ret = {}
-        for tag, value in info.items():
-            decoded = TAGS.get(tag, tag)
-            ret[decoded] = convert_to_string(value)
-            self.exif = ret
+        try:
+            for tag, value in info.items():
+                decoded = TAGS.get(tag, tag)
+                ret[decoded] = convert_to_string(value)
+                self.exif = ret
+        except:
+            print("Error read meta")
