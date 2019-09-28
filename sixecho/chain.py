@@ -9,45 +9,9 @@ import eospy.cleos
 import pytz
 
 
-def test_eos():
-    ce = eospy.cleos.Cleos(url='http://localhost:8888')
-
-    # cleos push action hello hi '["bob"]' -p bob@active
-    arguments = {"user": 'bob'}
-    payload = {
-        "account": "hello",
-        "name": "hi",
-        "authorization": [{
-            "actor": "bob",
-            "permission": "active",
-        }],
-    }
-
-    data = ce.abi_json_to_bin(payload['account'], payload['name'], arguments)
-
-    print(data)
-
-    payload['data'] = data['binargs']
-    print(payload)
-    trx = {"actions": [payload]}
-    import datetime as dt
-    trx['expiration'] = str(
-        (dt.datetime.utcnow() +
-         dt.timedelta(seconds=60)).replace(tzinfo=pytz.UTC))
-
-    key = eospy.keys.EOSKey(
-        '5KDA5SewCxdFBSfiLKBnmNZR7PBZ3jZbtLpPhqhwi1LZ2dAHkAu')
-    print(trx)
-    resp = ce.push_transaction(trx, key, broadcast=True)
-
-    print('------------------------------------------------')
-    print(resp)
-    print('------------------------------------------------')
-
-
-class EOS(object):
+class Chain(object):
     """
-    EOS class
+    Chain class
     """
     def __init__(self, private_key=None, host_url=None):
         """

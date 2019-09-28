@@ -1,4 +1,4 @@
+from .chain import Chain
 from .client import Client
-from .eos import EOS
-from .image import Image
-from .text import Text
+from .image_digest import Image
+from .text_digest import Text
