@@ -6,4 +6,7 @@ keras>=2.0.0
 requests
 pythainlp==2.0.6
 PyPDF2
-epub_conversion 
+epub_conversion
+termcolor
+psutil
+libeospy
