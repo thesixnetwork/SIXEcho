@@ -23,7 +23,7 @@ from epub_conversion.utils import open_book
 from PIL import Image
 from pythainlp import word_tokenize
 
-from .util import print_progress_bar
+from .echo_util import print_progress_bar
 
 #  def mygrouper(n, iterable):
 #  """
