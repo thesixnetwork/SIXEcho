@@ -36,8 +36,7 @@ pip install .
 ```
 
 # Documentation
-this is a link. click [here](example/README.md)
-
+ECHO on more technical detail. [GitBook](https://sixnetwork.gitbook.io/echo/)
 
 
 ## License
