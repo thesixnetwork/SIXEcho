@@ -1,0 +1,12 @@
+datasketch==1.4.3
+numpy
+pandas
+scikit-learn
+keras>=2.0.0
+requests
+pythainlp==2.0.6
+PyPDF2
+epub_conversion
+termcolor
+psutil
+libeospy
