@@ -4,6 +4,7 @@
 import datetime as dt
 import json
 import os
+import uuid
 
 import eospy.cleos
 import pytz
@@ -36,8 +37,9 @@ class Chain(object):
             "type": digital_content.type
         })
         mdata = json.dumps(digital_content.meta_media)
-
+        uid = uuid.uuid1()
         arguments = {
+            "assetId": str(uid),
             "author": owner,
             "category": digital_content.meta_media["category_id"],
             "owner": owner,
