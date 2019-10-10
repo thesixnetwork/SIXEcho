@@ -5,6 +5,7 @@ import datetime as dt
 import json
 import os
 import uuid
+from datetime import datetime, timezone
 
 import eospy.cleos
 import pytz
@@ -19,6 +20,31 @@ class Chain(object):
         """
         self.private_key = private_key
         self.host_url = host_url
+
+    def get_id(self, authorization, owner):
+        ce = eospy.cleos.Cleos(url=self.host_url)
+        payload = {
+            "account": "assets",
+            "name": "newasset",
+            "authorization": authorization,
+        }
+
+        arguments = {
+            "author": owner,
+        }
+        data = ce.abi_json_to_bin(payload["account"], payload["name"],
+                                  arguments)
+        payload['data'] = data['binargs']
+        trx = {"actions": [payload]}
+        trx['expiration'] = str(
+            (dt.datetime.utcnow() +
+             dt.timedelta(seconds=60)).replace(tzinfo=pytz.UTC))
+        key = eospy.keys.EOSKey(self.private_key)
+        resp = ce.push_transaction(trx, key, broadcast=True)
+        assetid = resp["processed"]["action_traces"][0]["inline_traces"][1][
+            "act"]["data"]["assetid"]
+        #  newid = int(datetime.now(tz=timezone.utc).timestamp() * 1000)
+        return assetid
 
     def push_transaction(self, owner, authorization, digital_content):
         """
@@ -37,9 +63,8 @@ class Chain(object):
             "type": digital_content.type
         })
         mdata = json.dumps(digital_content.meta_media)
-        uid = uuid.uuid1()
         arguments = {
-            "assetId": str(uid),
+            "assetid": self.get_id(authorization, owner),
             "author": owner,
             "category": digital_content.meta_media["category_id"],
             "owner": owner,
