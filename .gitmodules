@@ -1,3 +1,6 @@
 [submodule "eos"]
 	path = eos
 	url = https://github.com/thesixnetwork/eos
+[submodule "sdk/python"]
+	path = sdk/python
+	url = https://github.com/thesixnetwork/echo-sdk-python
