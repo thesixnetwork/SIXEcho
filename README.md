@@ -22,6 +22,16 @@ To shape the better future for the industry, the SIX Echo team envisions the dig
 - ECHO using SIX as a fee to store and verifying creative works.
 - From create and issue rights to the creator, ECHO will create send, receive and trade economy.
 
+## Our solutions
+- ECHO will store asset's identity and ownership history in a secure digital token/smart contract
+  - Semantic metadata: Assets' information such as title, author, creator, publisher, photographer, etc.
+  - Digital fingerprint: The set of binary digits that uniquely identifies an digital asset
+- ECHO will not store contents in blockchain but semantic data and digital fingerprint
+- ECHO uses unique consensus method to synchronized asset's identity
+- ECHO creates index of creative works which will allow creators to explore their rights
+- ECHO project is an open source under the term of Apache-2.0
+- ECHO uses SIX token as a fee to store and verify creative works
+
 ## Technology (developing)
 - python 3.7
 
@@ -36,7 +46,7 @@ pip install .
 ```
 
 # Documentation
-ECHO on more technical detail. [GitBook](https://sixnetwork.gitbook.io/echo/)
+ECHO on more technical detail. [GitBook](https://sixnetwork.gitbook.io/docs/echo/)
 
 
 ## License
